@@ -1,0 +1,20 @@
+{
+  "name": "movidedb",
+  "version": "1.0.0",
+  "description": "Una aplicacion para ver informacion de peliculas",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amaneiro7/MovideDB.git"
+  },
+  "keywords": [],
+  "author": "Andres Maneiro <amaneiro7@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/amaneiro7/MovideDB/issues"
+  },
+  "homepage": "https://github.com/amaneiro7/MovideDB#readme"
+}
