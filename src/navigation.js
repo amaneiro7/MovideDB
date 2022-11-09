@@ -1,18 +1,19 @@
 window.addEventListener('load', navigator, false);
 window.addEventListener('hashchange', navigator, false);
 
-arrowBtn.addEventListener('click', () => location.hash = 'home=');
+arrowBtn.addEventListener('click', () => location.hash = history.back());
 trendingBtn.addEventListener('click', () => location.hash = 'trends=');
-searchFormBtn.addEventListener('click', () => location.hash = 'search=');
+searchFormBtn.addEventListener('click', () => location.hash = `search=${searchFormInput.value.toLowerCase()}`);
 
 function navigator() {  
+    window.scrollTo(0,0);
     
 
     location.hash.startsWith('#trends')     ?
         trendsPage()        :
-    location.hash.startsWith('#category=')  ?
+    location.hash.startsWith('#category')  ?
         categoriesPage()    :
-    location.hash.startsWith('#movie=')     ?
+    location.hash.startsWith('#movie')     ?
         movieDetailsPage()  :
     location.hash.startsWith('#search=')    ?
         searchPage()        :
@@ -53,6 +54,9 @@ function trendsPage() {
     categoriesPreviewSection.classList.add('inactive');
     genericSection.classList.remove('inactive');
     movieDetailSection.classList.add('inactive');
+    
+    headerCategoryTitle.innerHTML = 'Tendencias'
+    getTrendingMovies();
 }
 
 function categoriesPage() {
@@ -70,6 +74,13 @@ function categoriesPage() {
     categoriesPreviewSection.classList.add('inactive');
     genericSection.classList.remove('inactive');
     movieDetailSection.classList.add('inactive');
+
+    const [_, categoryData] = location.hash.split('=')
+    const [categoryId, categoryName] = categoryData.split('-');
+
+    headerCategoryTitle.innerHTML = categoryName;
+
+    getMovieByCategory(categoryId);
 }
 
 function movieDetailsPage() {
@@ -97,11 +108,15 @@ function searchPage() {
     arrowBtn.classList.remove('inactive');
     arrowBtn.classList.remove('header-arrow--white');
     headerTitle.classList.add('inactive');
-    headerCategoryTitle.classList.remove('inactive');
+    headerCategoryTitle.classList.add('inactive');
     searchForm.classList.remove('inactive');
 
     trendingPreviewSection.classList.add('inactive');
     categoriesPreviewSection.classList.add('inactive');
     genericSection.classList.remove('inactive');
     movieDetailSection.classList.add('inactive');
+
+    const [_, query] = location.hash.split('=')
+    console.log(query);
+    getMoviesBySearch(query)
 }
