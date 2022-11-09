@@ -2,9 +2,18 @@ window.addEventListener('load', navigator, false);
 window.addEventListener('hashchange', navigator, false);
 
 arrowBtn.addEventListener('click', () => {
-
-    location.hash = history.back()
+    console.log(document.referrer.split('/')[2] === window.location.host);
+    console.log(window.location.host);
+    console.log(document.referrer.split('/')[2]);
+    if (document.referrer.split('/')[2] === window.location.host) {    
+        location.hash = history.go(-1)        
+    } else {
+        console.log(window.location.host);
+        window.location.assign('')        
+        homePage();        
+    }
 });
+
 trendingBtn.addEventListener('click', () => location.hash = 'trends=');
 searchFormBtn.addEventListener('click', () => location.hash = `search=${searchFormInput.value.toLowerCase()}`);
 
@@ -42,7 +51,7 @@ function homePage() {
 }
 
 function trendsPage() {
-        headerSection.classList.remove('header-container--long')
+    headerSection.classList.remove('header-container--long')
     headerSection.style.background= '';
     arrowBtn.classList.remove('inactive');
     arrowBtn.classList.remove('header-arrow--white');
