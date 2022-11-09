@@ -97,7 +97,9 @@ function movieDetailsPage() {
     categoriesPreviewSection.classList.add('inactive');
     genericSection.classList.add('inactive');
     movieDetailSection.classList.remove('inactive');
-
+    
+    const [_, movieId] = location.hash.split('=')
+    getMovieByID(movieId)
 }
 
 function searchPage() {
@@ -117,6 +119,6 @@ function searchPage() {
     movieDetailSection.classList.add('inactive');
 
     const [_, query] = location.hash.split('=')
-    console.log(query);
+    
     getMoviesBySearch(query)
 }
