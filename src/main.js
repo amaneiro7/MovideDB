@@ -41,8 +41,7 @@ async function getMoviesBySearch(query) {
 async function getMovieByID(id) {
     const { data: movie } = await api(`/movie/${id}`);
 
-    const movieImgUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
-    console.log(movieImgUrl);
+    const movieImgUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;    
     
     headerSection.style.background = `
     linear-gradient(
