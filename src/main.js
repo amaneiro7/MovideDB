@@ -8,23 +8,78 @@ const api = axios.create({
     },
 });
 
+
 //API calls
 async function getTrendingMoviesPreview() {
     const pathURL = '/trending/movie/day'
-    renderMovies(trendingMoviesPreviewList, pathURL)
+    renderMovies(trendingMoviesPreviewList, pathURL, true)
 }
 
 async function getTrendingMovies() {
     const pathURL = '/trending/movie/day'
-    renderMovies(genericSection, pathURL)
+    renderMovies(genericSection, pathURL);  
+    
+}
+
+async function getPaginatedTrendingMovies() {
+    const {
+        scrollTop,
+        scrollHeight,
+        clientHeight
+    } = document.documentElement
+
+    const scrollIsBottom =  (scrollTop + clientHeight) >= (scrollHeight - 15);
+    const pageIsNotMax = page < maxPage;
+
+    if (scrollIsBottom && pageIsNotMax) {
+        page++;
+        const pathURL = '/trending/movie/day'
+        const config = {
+            params: {
+                page,
+            },
+        }    
+        
+        renderMovies(genericSection, pathURL, { lazyLoad: true, clean: false }, config)        
+    }
+
 }
 
 async function getMovieByCategory(id) {
     const pathURL = '/discover/movie'
-    const config = {params: {with_genres: id,},}    
+    const config = {
+        params: {
+            
+        },
+    }    
     
-    renderMovies(genericSection, pathURL, config)
+    renderMovies(genericSection, pathURL, {lazyLoad: true, clean: true} , config)    
+}
+
+function getPaginatedMoviesByCategory(id) {
+    return async () => {
+        const {
+            scrollTop,
+            scrollHeight,
+            clientHeight
+        } = document.documentElement
     
+        const scrollIsBottom =  (scrollTop + clientHeight) >= (scrollHeight - 15);
+        const pageIsNotMax = page < maxPage;        
+    
+        if (scrollIsBottom && pageIsNotMax) {
+            page++;
+            const pathURL = '/discover/movie'
+            const config = {
+                params: {
+                    with_genres: id,
+                    page,
+                },
+            }    
+            
+            renderMovies(genericSection, pathURL, { lazyLoad: true, clean: false }, config)        
+        }    
+    }
 }
 
 async function getMoviesBySearch(query) {
@@ -34,8 +89,33 @@ async function getMoviesBySearch(query) {
             query: query
         },}    
     
-    renderMovies(genericSection, pathURL, config)
+    renderMovies(genericSection, pathURL, {lazyLoad: true, clean: true}, config)    
+}
+
+function getPaginatedMoviesBySearch(query) {
+    return async () => {
+        const {
+            scrollTop,
+            scrollHeight,
+            clientHeight
+        } = document.documentElement
     
+        const scrollIsBottom =  (scrollTop + clientHeight) >= (scrollHeight - 15);
+        const pageIsNotMax = page < maxPage;        
+    
+        if (scrollIsBottom && pageIsNotMax) {
+            page++;
+            const pathURL = '/search/movie'
+            const config = {
+                params: {
+                    query,
+                    page,
+                },
+            }    
+            
+            renderMovies(genericSection, pathURL, { lazyLoad: true, clean: false }, config)        
+        }    
+    }
 }
 
 async function getMovieByID(id) {
@@ -52,8 +132,10 @@ async function getMovieByID(id) {
     url(${movieImgUrl}
         )`;
     movieDetailTitle.textContent = movie.title;
-    movieDetailDescription.textContent = movie.overall;
-    movieDetailScore.textContent = movie.vote_average;
+    movieDetailDescription.textContent = movie.overview;
+    console.log(movie.overview);
+    console.log(movieDetailDescription);
+    movieDetailScore.textContent = movie.vote_average.toFixed(1);
 
     createCategories(movie.genres, movieDetailCategoriesList);
     getRelatedMoviesID(id)
@@ -66,6 +148,8 @@ async function getCategoriesPreview() {
     createCategories(categories, categoriesPreviewList);
 }
 
+
+
 async function getRelatedMoviesID(id) {    
     pathURL = (`movie/${id}/recommendations`);   
 
@@ -73,11 +157,32 @@ async function getRelatedMoviesID(id) {
 }
 
 //utils
-async function renderMovies(elementHTML, path, optionalConfig = {}) {
+const lazyLoader = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+        // console.log(entry);
+        if (entry.isIntersecting) {
+            const url = entry.target.getAttribute('data-img')
+            entry.target.setAttribute('src', url)
+        }
+    });
+});
+
+async function renderMovies(
+        elementHTML, 
+        path, 
+        {
+            lazyLoad = false,
+            clean = true,
+        } = {}, 
+        optionalConfig = {}
+        ) {
     const { data } = await api(path, optionalConfig);   
     const movies = data.results;
-    
-    elementHTML.innerHTML = ""
+    maxPage = data.total_pages;    
+
+    if (clean) {
+        elementHTML.innerHTML = ""
+    }    
 
     movies.forEach(movie => {        
         const movieContainer = document.createElement('div');
@@ -88,15 +193,31 @@ async function renderMovies(elementHTML, path, optionalConfig = {}) {
 
         const movieImg = document.createElement('img');
         movieImg.classList.add('movie-img');
-        movieImg.setAttribute('alt', movie.title);        
+        movieImg.setAttribute('alt', movie.title); 
+        // movieImg.setAttribute("loading","lazy");       
         movieImg.setAttribute(
-            'src', 
+            lazyLoad ? 'data-img' : 'src', 
             `https://image.tmdb.org/t/p/w300${movie.poster_path}`
             );
+        movieImg.addEventListener('error', () => {
+            movieImg.setAttribute('src', 'https://reactnativecode.com/wp-content/uploads/2018/01/Error_Img.png')
+        })
+            
+        if (lazyLoad) {
+            lazyLoader.observe(movieImg);
+        }
+
         movieContainer.appendChild(movieImg);        
-        elementHTML.appendChild(movieContainer);
+        elementHTML.appendChild(movieContainer);        
     }); 
-}
+//     const btnLoadMore = document.createElement('button');
+//     btnLoadMore.innerText = 'Cargar mas';
+//    btnLoadMore.addEventListener("click", () => {
+//     console.log('estoy aqui sin darle a click')
+//     getPaginatedTrendingMovies(path);
+//    })
+//     genericSection.appendChild(btnLoadMore);
+};
 
 async function createCategories(categories, elementHTML) {
     elementHTML.innerHTML = "";

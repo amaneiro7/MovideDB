@@ -107,6 +107,7 @@ button {
 
 .movie-img {
   border-radius: 8px;
+  min-height: 175px;
 }
 
 .categoriesPreview-list, .categories-list {
@@ -196,7 +197,32 @@ button {
 
 .trendingPreview-movieList .movie-container {
   display: inline-block;
-  margin-right: 8px;
+  margin-top: 1px;
+  margin-right: 8px;  
+}
+
+.trendingPreview-movieList .movie-container--loading,
+.relatedMovies-scrollContainer .movie-container--loading,
+.trendingPreview-movieList .movie-container--loading,
+.genericList-container .movie-container--loading {
+  height: 225px;
+  min-height: 225px;
+  max-height: 225px;
+  width: 150px;
+  min-width: 150px;
+  max-width: 150px;
+  background-color: #eee;
+  border-radius: 8px;
+  box-shadow: 0px 0px 0px 1px #bbb;
+  opacity: 0.3;  
+  animation: loading-skeleton infinite 1.5s;
+}
+
+.movie-container--loading:nth-child(2) {
+  animation-delay: .2s;
+}
+.movie-container--loading:nth-child(2) {
+  animation-delay: .4s;
 }
 
 .trendingPreview-movieList .movie-container .movie-img {
@@ -220,6 +246,18 @@ button {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.category-container--loading {
+  content: '••••';
+  color: transparent;  
+  margin-right: 8px;
+  width: 290px;
+  height: 20px;
+  background-color: #eee;
+  border-radius: 8px;
+  box-shadow: 0px 0px 0px 1px #bbb;
+  margin-bottom: 8px;
 }
 
 .category-title::before {
@@ -305,6 +343,16 @@ button {
 .movieDetail-description {
   margin: 0 0 24px 0;
 }
+/* 
+.movieDetail-title--loading {
+  content: '••••';
+  color: transparent;    
+  width: 200px;
+  height: 20px;
+  background-color: #eee;
+  border-radius: 8px;
+  box-shadow: 0px 0px 0px 1px #bbb;  
+} */
 
 .relatedMovies-container {
   margin-top: 24px;
@@ -328,6 +376,7 @@ button {
   display: inline-block;
   margin-right: 8px;
 }
+
 
 .relatedMovies-scrollContainer .movie-img {
   width: 125px;
@@ -354,4 +403,14 @@ footer {
 /* Navigation */
 .inactive {
   display: none;
+}
+
+/* Animations */
+@keyframes loading-skeleton {
+  0%, 100% {
+    opacity: 100%;
+  }
+  50% {
+    opacity: 0%;
+  }
 }

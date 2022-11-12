@@ -1,10 +1,12 @@
+let page = 1;
+let infiniteScroll;
+let maxPage;
+
 window.addEventListener('load', navigator, false);
 window.addEventListener('hashchange', navigator, false);
+window.addEventListener('scroll', infiniteScroll, {passive: false});
 
 arrowBtn.addEventListener('click', () => {
-    console.log(document.referrer.split('/')[2] === window.location.host);
-    console.log(window.location.host);
-    console.log(document.referrer.split('/')[2]);
     if (document.referrer.split('/')[2] === window.location.host) {    
         location.hash = history.go(-1)        
     } else {
@@ -14,13 +16,21 @@ arrowBtn.addEventListener('click', () => {
     }
 });
 
-trendingBtn.addEventListener('click', () => location.hash = 'trends=');
-searchFormBtn.addEventListener('click', () => location.hash = `search=${searchFormInput.value.toLowerCase()}`);
+trendingBtn.addEventListener('click', () => {
+    location.hash = 'trends'
+});
+searchFormBtn.addEventListener('click', () => {
+    location.hash = `search=${searchFormInput.value.toLowerCase()}`
+});
 
 function navigator() {  
     window.scrollTo(0,0);
-    
 
+    if (infiniteScroll) {
+        window.removeEventListener('scroll', infiniteScroll, false);
+        infiniteScroll = undefined;
+    }
+    
     location.hash.startsWith('#trends')     ?
         trendsPage()        :
     location.hash.startsWith('#category')  ?
@@ -29,7 +39,13 @@ function navigator() {
         movieDetailsPage()  :
     location.hash.startsWith('#search=')    ?
         searchPage()        :
-        homePage()          
+        homePage();
+    
+    if (infiniteScroll) {
+        window.addEventListener('scroll', infiniteScroll, false);
+
+    }
+
 }
 
 function homePage() {
@@ -66,6 +82,8 @@ function trendsPage() {
     
     headerCategoryTitle.innerHTML = 'Tendencias'
     getTrendingMovies();
+
+    infiniteScroll = getPaginatedTrendingMovies;
 }
 
 function categoriesPage() {
@@ -89,6 +107,7 @@ function categoriesPage() {
     headerCategoryTitle.innerHTML = categoryName;
 
     getMovieByCategory(categoryId);
+    infiniteScroll = getPaginatedMoviesByCategory(categoryId);
 }
 
 function movieDetailsPage() {
@@ -127,4 +146,5 @@ function searchPage() {
     const [_, query] = location.hash.split('=')
     
     getMoviesBySearch(query)
+    infiniteScroll = getPaginatedMoviesBySearch(query);
 }
