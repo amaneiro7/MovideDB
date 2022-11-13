@@ -1,6 +1,8 @@
 let page = 1;
 let infiniteScroll;
 let maxPage;
+const lang = navigator.language;
+console.log(lang);
 
 window.addEventListener('load', navigator, false);
 window.addEventListener('hashchange', navigator, false);
@@ -56,6 +58,7 @@ function homePage() {
     headerTitle.classList.remove('inactive');
     headerCategoryTitle.classList.add('inactive');
     searchForm.classList.remove('inactive');
+    likedSection.classList.remove('inactive')
 
     trendingPreviewSection.classList.remove('inactive');
     categoriesPreviewSection.classList.remove('inactive');
@@ -64,6 +67,7 @@ function homePage() {
 
     getTrendingMoviesPreview();
     getCategoriesPreview();
+    getLikedMovies();
 }
 
 function trendsPage() {
@@ -74,6 +78,7 @@ function trendsPage() {
     headerTitle.classList.add('inactive');
     headerCategoryTitle.classList.remove('inactive');
     searchForm.classList.add('inactive');
+    likedSection.classList.add('inactive');    
 
     trendingPreviewSection.classList.add('inactive');
     categoriesPreviewSection.classList.add('inactive');
@@ -95,6 +100,7 @@ function categoriesPage() {
     headerTitle.classList.add('inactive');
     headerCategoryTitle.classList.remove('inactive');
     searchForm.classList.add('inactive');
+    likedSection.classList.add('inactive');
 
     trendingPreviewSection.classList.add('inactive');
     categoriesPreviewSection.classList.add('inactive');
@@ -104,7 +110,7 @@ function categoriesPage() {
     const [_, categoryData] = location.hash.split('=')
     const [categoryId, categoryName] = categoryData.split('-');
 
-    headerCategoryTitle.innerHTML = categoryName;
+    headerCategoryTitle.innerHTML = `${categoryName}`;
 
     getMovieByCategory(categoryId);
     infiniteScroll = getPaginatedMoviesByCategory(categoryId);
@@ -118,6 +124,7 @@ function movieDetailsPage() {
     headerTitle.classList.add('inactive');
     headerCategoryTitle.classList.add('inactive');
     searchForm.classList.add('inactive');
+    likedSection.classList.add('inactive');
 
     trendingPreviewSection.classList.add('inactive');
     categoriesPreviewSection.classList.add('inactive');
@@ -137,6 +144,7 @@ function searchPage() {
     headerTitle.classList.add('inactive');
     headerCategoryTitle.classList.add('inactive');
     searchForm.classList.remove('inactive');
+    likedSection.classList.add('inactive');
 
     trendingPreviewSection.classList.add('inactive');
     categoriesPreviewSection.classList.add('inactive');
